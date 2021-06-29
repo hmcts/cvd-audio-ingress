@@ -86,6 +86,11 @@ resource "azurerm_private_endpoint" "endpoint" {
     subresource_names              = ["Blob"]
     is_manual_connection           = false
   }
+
+  private_dns_zone_group {
+    name                           = "${azurerm_private_endpoint.endpoint.name}-dnszonegroup"
+    private_dns_zone_ids           = "${azurerm_private_dns_zone.blob.id}"
+  }
   tags = var.common_tags
 }
 

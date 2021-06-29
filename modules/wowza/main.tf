@@ -88,7 +88,7 @@ resource "azurerm_private_endpoint" "endpoint" {
   }
 
   private_dns_zone_group {
-    name                           = "${azurerm_private_endpoint.endpoint.name}-dnszonegroup"
+    name                           = "${azurerm_resource_group.rg.name}-dnszonegroup"
     private_dns_zone_ids           = "${azurerm_private_dns_zone.blob.id}"
   }
   tags = var.common_tags

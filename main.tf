@@ -19,23 +19,21 @@ module "wowza" {
   env                           = var.env
   common_tags                   = local.common_tags
   admin_ssh_key_path            = var.admin_ssh_key_path
-  service_certificate_kv_url    = var.service_certificate_kv_url
-  key_vault_id                  = var.key_vault_id
   address_space                 = var.address_space
   lb_IPaddress                  = var.lb_IPaddress
   num_applications              = var.num_applications
   cert_path                     = var.cert_path
-  thumbprint                    = var.thumbprint
+  cert_name                     = var.cert_name
   wowza_sku                     = var.wowza_sku
   wowza_version                 = var.wowza_version
   wowza_publisher               = var.wowza_publisher
   wowza_offer                   = var.wowza_offer
-  ssh_public_key                = var.ssh_public_key
   rtmps_source_address_prefixes = var.rtmps_source_address_prefixes
   dev_source_address_prefixes   = var.dev_source_address_prefixes
   ws_name                       = var.ws_name
   ws_sub_id                     = var.ws_sub_id
   ws_rg                         = var.ws_rg
+  sa_recording_retention        = var.sa_recording_retention
 }
 
 resource "azurerm_dns_a_record" "wowza" {

@@ -47,29 +47,11 @@ steps:
       command: 'plan'
       environmentServiceName: ${{ parameters.subscriptionName }}
       commandOptions: >
-        -var "location=$(location)"
-        -var "product=$(product)"
+        -var-file "$(Build.SourcesDirectory)/tf-variables/shared.tfvars"
+        -var-file "$(Build.SourcesDirectory)/tf-variables/${{parameters.env}}.tfvars"
         -var "builtFrom=${{ parameters.builtFrom }}"
-        -var "environment=${{ parameters.env }}"
-        -var "env=${{ parameters.env }}"
+        -var "cert_name=${{parameters.certName}}"
         -var "cert_path=$(certPath)"
-        -var "service_certificate_kv_url=$(secretId)"
-        -var "thumbprint=$(thumbprint)"
-        -var "key_vault_id=$(kvId)"
-        -var "wowza_sku=$(wowza_sku)"
-        -var "wowza_version=$(wowza_version)"
-        -var "wowza_publisher=$(wowza_publisher)"
-        -var "wowza_offer=$(wowza_offer)"
-        -var "dns_zone_name=$(dns_zone_name)"
-        -var "dns_resource_group=$(dns_resource_group)"
-        -var "address_space=$(address_space)"
-        -var "num_applications=$(num_applications)"
-        -var "lb_IPaddress=$(lb_IPaddress)"
-        -var "ssh_public_key=$(pubKey)"
-        -var "rtmps_source_address_prefixes=[$(rtmps_source_address_prefixes)]"
-        -var "dev_source_address_prefixes=$(dev_source_address_prefixes)"
-        -var "ws_name=$(ws_name)"
-        -var "ws_rg=$(ws_rg)"
         -var "ws_sub_id=$(ws_sub_id)"
         -out="${{ parameters.env }}.tfplan" -no-color -input=false
 #      publishPlanResults: ${{ parameters.env }}.tfplan

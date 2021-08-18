@@ -4,16 +4,8 @@ variables:
   subscriptionName: 'DTS-SHAREDSERVICES-SBOX'
   kv_name_prefix : 'cftapps'
   infra_kv: 'infra-vault-sandbox'
-  dns_zone_name: "shared-services.uk.south.sbox.hmcts.internal"
-  dns_resource_group: "cvp-sharedinfra-sbox"
-  address_space: "10.50.11.0/28"
-  lb_IPaddress: "10.50.11.10"
-  num_applications: 20
-  ws_name: 'cvp-sbox'
-  ws_rg: 'cvp-sharedinfra-sbox'
-  ws_sub_name: 'DTS-SHAREDSERVICES-SBOX'
+  
   dynatrace_token: 'dynatrace-nonprod-api-key'
   dynatrace_id: 'yrk32651'
   dynatrace_host_group: 'SBOX_DTS_CVP'
   dynatrace_network_zone: 'azure.cft'
-  rtmps_source_address_prefixes: \"35.204.50.163\",\"35.204.108.36\",\"34.91.92.40\",\"34.91.75.226\",\"81.109.71.47\"

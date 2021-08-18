@@ -28,14 +28,6 @@ variable "admin_ssh_key_path" {
   default = "~/.ssh/wowza.pub"
 }
 
-variable "service_certificate_kv_url" {
-  type = string
-}
-
-variable "key_vault_id" {
-  type = string
-}
-
 # DNS
 variable "dns_zone_name" {
   type = string
@@ -56,8 +48,7 @@ variable "lb_IPaddress" {
 variable "cert_path" {
   type = string
 }
-
-variable "thumbprint" {
+variable "cert_name" {
   type = string
 }
 
@@ -83,9 +74,6 @@ variable "num_applications" {
   default = 1
 }
 
-variable "ssh_public_key" {
-  type = string
-}
 
 variable "rtmps_source_address_prefixes" {
   type = list(string)
@@ -106,4 +94,10 @@ variable "ws_rg" {
 
 variable "ws_sub_id" {
   type = string
+}
+
+## Storage Account
+variable "sa_recording_retention" {
+  type        = number
+  description = "How long to retain the recordings in blob"
 }

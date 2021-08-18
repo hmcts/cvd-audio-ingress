@@ -25,6 +25,11 @@ Below are some instructions for some of the tests.
 Before starting testing, make sure the client IP(s) for the machines you are testing from is added to the 
 `dev_source_address_prefixes` variable. This can be found in a variable group in Azure DevOps called `cvp-<env>`.
 
+### Terraform Testing
+You can run the plan command from your local by running the PowerShell command in `test/tf-plan.ps1`
+
+This will generate a plan against the remote state file.
+
 ### Functional tests
 
 1. Check that port 443 is responding with a valid SSL cert by opening the endpoint in your browser. (Smoke test candidate)

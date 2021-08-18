@@ -7,51 +7,65 @@ resource "azurerm_resource_group" "rg" {
   location = var.location
   tags     = var.common_tags
 }
+locals {
+  main_container_name = "recordings"
+}
+module "sa" {
+  source = "git::https://github.com/hmcts/cnp-module-storage-account.git?ref=master"
+  #source = "../../../cnp-module-storage-account"
 
-resource "azurerm_storage_account" "sa" {
-  name                      = "${replace(lower(local.service_name), "-", "")}sa"
-  resource_group_name       = azurerm_resource_group.rg.name
-  location                  = azurerm_resource_group.rg.location
-  tags                      = var.common_tags
-  access_tier               = var.sa_access_tier
-  account_kind              = var.sa_account_kind
-  account_tier              = var.sa_account_tier
-  account_replication_type  = var.sa_account_replication_type
-  enable_https_traffic_only = true
-  min_tls_version           = "TLS1_2"
-  blob_properties {
-    delete_retention_policy {
-      days = 365
+  env = var.env
+
+  storage_account_name = "${replace(lower(local.service_name), "-", "")}sa"
+  common_tags          = var.common_tags
+
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+
+  account_tier             = var.sa_account_tier
+  account_kind             = var.sa_account_kind
+  account_replication_type = var.sa_account_replication_type
+  access_tier              = var.sa_access_tier
+
+  team_name    = "CVP DevOps"
+  team_contact = "#vh-devops"
+
+  policy = [
+    {
+      name = "RecordingRetionPolicy"
+      filters = {
+        prefix_match = ["${local.main_container_name}/"]
+        blob_types   = ["blockBlob"]
+      }
+      actions = {
+        version_delete_after_days_since_creation = var.sa_recording_retention
+      }
     }
-  }
+  ]
+  containers = [
+    {
+      name        = local.main_container_name
+      access_type = "private"
+    },
+    // Keep these containers until all recordings have been migrated to `recordings` container
+    {
+      name        = "recordings01"
+      access_type = "private"
+    },
+    {
+      name        = "recordings02"
+      access_type = "private"
+    }
+  ]
 }
 
 resource "azurerm_management_lock" "sa" {
   name       = "resource-sa"
-  scope      = azurerm_storage_account.sa.id
+  scope      = module.sa.storageaccount_id
   lock_level = "CanNotDelete"
   notes      = "Lock to prevent deletion of storage account"
 }
 
-resource "azurerm_storage_container" "media_container" {
-  name                  = "recordings"
-  storage_account_name  = azurerm_storage_account.sa.name
-  container_access_type = "private"
-}
-
-// Keep this resource until all recordings have been migrated to `recordings` container
-resource "azurerm_storage_container" "media_container_01" {
-  name                  = "recordings01"
-  storage_account_name  = azurerm_storage_account.sa.name
-  container_access_type = "private"
-}
-
-// Keep this resource until all recordings have been migrated to `recordings` container
-resource "azurerm_storage_container" "media_container_02" {
-  name                  = "recordings02"
-  storage_account_name  = azurerm_storage_account.sa.name
-  container_access_type = "private"
-}
 
 resource "azurerm_virtual_network" "vnet" {
   name          = "${local.service_name}-vnet"
@@ -73,7 +87,7 @@ resource "azurerm_subnet" "sn" {
 }
 
 resource "azurerm_private_endpoint" "endpoint" {
-  name = "${azurerm_storage_account.sa.name}-endpoint"
+  name = "${module.sa.storageaccount_name}-endpoint"
 
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
@@ -81,8 +95,8 @@ resource "azurerm_private_endpoint" "endpoint" {
   subnet_id = azurerm_subnet.sn.id
 
   private_service_connection {
-    name                           = "${azurerm_storage_account.sa.name}-scon"
-    private_connection_resource_id = azurerm_storage_account.sa.id
+    name                           = "${module.sa.storageaccount_name}-scon"
+    private_connection_resource_id = module.sa.storageaccount_id
     subresource_names              = ["Blob"]
     is_manual_connection           = false
   }
@@ -105,7 +119,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "vnet_link" {
 }
 
 resource "azurerm_private_dns_a_record" "sa_a_record" {
-  name                = azurerm_storage_account.sa.name
+  name                = module.sa.storageaccount_name
   zone_name           = azurerm_private_dns_zone.blob.name
   resource_group_name = azurerm_resource_group.rg.name
   ttl                 = 300
@@ -293,7 +307,7 @@ resource "azurerm_lb" "lb" {
 }
 
 resource "azurerm_lb_backend_address_pool" "be_add_pool" {
-  resource_group_name = azurerm_resource_group.rg.name
+  #resource_group_name = azurerm_resource_group.rg.name
   loadbalancer_id     = azurerm_lb.lb.id
   name                = "BackEndAddressPool"
 }
@@ -369,12 +383,12 @@ data "template_file" "cloudconfig" {
   template = file(var.cloud_init_file)
   vars = {
     certPassword       = random_password.certPassword.result
-    certThumbprint     = var.thumbprint
-    storageAccountName = azurerm_storage_account.sa.name
-    storageAccountKey  = azurerm_storage_account.sa.primary_access_key
+    certThumbprint     = data.azurerm_key_vault_certificate.cert.thumbprint
+    storageAccountName = module.sa.storageaccount_name
+    storageAccountKey  = module.sa.storageaccount_primary_access_key
     restPassword       = md5("wowza:Wowza:${random_password.restPassword.result}")
     streamPassword     = md5("wowza:Wowza:${random_password.streamPassword.result}")
-    containerName      = azurerm_storage_container.media_container.name
+    containerName      = local.main_container_name
     numApplications    = var.num_applications
   }
 }
@@ -387,6 +401,18 @@ data "template_cloudinit_config" "wowza_setup" {
     content_type = "text/cloud-config"
     content      = data.template_file.cloudconfig.rendered
   }
+}
+data "azurerm_key_vault" "cvp_kv" {
+  name                = "cvp-${var.env}-kv"
+  resource_group_name = "cvp-sharedinfra-${var.env}"
+}
+data "azurerm_key_vault_certificate" "cert" {
+  name         = var.cert_name
+  key_vault_id = data.azurerm_key_vault.cvp_kv.id
+}
+data "azurerm_key_vault_secret" "ssh_pub_key" {
+  name         = "cvp-ssh-pub-key"
+  key_vault_id = data.azurerm_key_vault.cvp_kv.id
 }
 
 resource "azurerm_linux_virtual_machine" "vm1" {
@@ -408,7 +434,7 @@ resource "azurerm_linux_virtual_machine" "vm1" {
 
   admin_ssh_key {
     username   = var.admin_user
-    public_key = var.ssh_public_key
+    public_key = data.azurerm_key_vault_secret.ssh_pub_key.value
   }
 
   os_disk {
@@ -420,9 +446,9 @@ resource "azurerm_linux_virtual_machine" "vm1" {
   provision_vm_agent = true
   secret {
     certificate {
-      url = var.service_certificate_kv_url
+      url = data.azurerm_key_vault_certificate.cert.id
     }
-    key_vault_id = var.key_vault_id
+    key_vault_id = data.azurerm_key_vault.cvp_kv.id
   }
 
   custom_data = data.template_cloudinit_config.wowza_setup.rendered
@@ -465,7 +491,7 @@ resource "azurerm_linux_virtual_machine" "vm2" {
 
   admin_ssh_key {
     username   = var.admin_user
-    public_key = var.ssh_public_key
+    public_key = data.azurerm_key_vault_secret.ssh_pub_key.value
   }
 
   os_disk {
@@ -477,9 +503,9 @@ resource "azurerm_linux_virtual_machine" "vm2" {
   provision_vm_agent = true
   secret {
     certificate {
-      url = var.service_certificate_kv_url
+      url = data.azurerm_key_vault_certificate.cert.id
     }
-    key_vault_id = var.key_vault_id
+    key_vault_id = data.azurerm_key_vault.cvp_kv.id
   }
 
   custom_data = data.template_cloudinit_config.wowza_setup.rendered

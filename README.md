@@ -67,10 +67,17 @@ is).
 
 ### Check Certificates:
 
-1. Get password via: `cat /usr/local/WowzaStreamingEngine/conf/Server.xml | grep Password`
-2. Run below and add password.
+1. Get password via: 
+```Bash
+jksPass=$(cat /usr/local/WowzaStreamingEngine/conf/Server.xml | grep KeyStorePassword)
+jksPass="${jksPass//<KeyStorePassword>/}"
+jksPass="${jksPass//<\/KeyStorePassword>/}"
+echo $jksPass
 ```
-keytool -list -v -keystore /usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks
+2. Run below and add password.
+```Bash
+export PATH=$PATH:/usr/local/WowzaStreamingEngine/java/bin
+keytool -list -v -keystore /usr/local/WowzaStreamingEngine/conf/ssl.wowza.jks -storepass $jksPass
 ```
 
 ### Check mount:

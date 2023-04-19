@@ -77,13 +77,13 @@ stages:
                 businessArea: ${{variables.businessArea}}
                 application: ${{variables.application}}
 
-            - template: templates\Azure\Storage\firewall-update.yaml@azTemplates
-              parameters:
-                subscriptionName: ${{variables.subscriptionName}}
-                resourceGroupName: "${{variables.product}}-recordings-${{variables.env}}-rg"
-                storageAccountName: "${{variables.product}}recordings${{variables.env}}sa"
-                action: Deny
-                alwaysRun: true
+            # - template: templates\Azure\Storage\firewall-update.yaml@azTemplates
+            #   parameters:
+            #     subscriptionName: ${{variables.subscriptionName}}
+            #     resourceGroupName: "${{variables.product}}-recordings-${{variables.env}}-rg"
+            #     storageAccountName: "${{variables.product}}recordings${{variables.env}}sa"
+            #     action: Deny
+            #     alwaysRun: true
 
         - job: CertGen${{parameters.env}}
           displayName: 'Generate Certificate for ${{parameters.env}}'

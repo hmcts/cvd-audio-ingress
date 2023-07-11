@@ -1,0 +1,18 @@
+trigger:
+  - none
+
+pr: 
+  - none
+
+jobs:
+- job:  
+  steps:
+    - task: AzureCLI@2
+      name: 'dns'
+      inputs:
+        azureSubscription: 'DTS-SHAREDSERVICES-PROD'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          az network dns record-set txt remove-record --resource-group reformmgmtrg --zone-name platform.hmcts.net --record-set-name _acme-challenge.cvp-recording --value "_1S3gOB1-0yRSDwWKPHUg8A4OmY0O-kQykzPjvbPm5E"
+          az network dns record-set txt add-record --resource-group reformmgmtrg --zone-name platform.hmcts.net --record-set-name _acme-challenge.cvp-recording --value "This is a TXT record"

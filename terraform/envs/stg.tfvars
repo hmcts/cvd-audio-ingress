@@ -12,6 +12,7 @@ ws_rg                         = "oms-automation"
 num_applications              = 3500
 vm_size                       = "Standard_D4ds_v5"
 os_disk_type                  = "StandardSSD_LRS"
+wowza_version                 = "4.8.25"
 os_disk_size                  = "512"
 dynatrace_tenant              = "yrk32651"
 expiry_days                   = 10

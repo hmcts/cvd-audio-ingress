@@ -13,6 +13,7 @@ num_applications              = 20
 vm_size                       = "Standard_D2ds_v5"
 os_disk_type                  = "StandardSSD_LRS"
 os_disk_size                  = "512"
+wowza_version                 = "4.8.25"
 dynatrace_tenant              = "yrk32651"
 expiry_days                   = 3
 remaining_days                = 1

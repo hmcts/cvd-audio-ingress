@@ -11,6 +11,7 @@ ws_name                       = "hmcts-prod"
 ws_rg                         = "oms-automation"
 num_applications              = 3500
 vm_size                       = "Standard_F8s_v2"
+wowza_version                 = "4.8.23"
 dynatrace_tenant              = "ebe20728"
 expiry_days                   = 15
 remaining_days                = 5

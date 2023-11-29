@@ -18,3 +18,12 @@ moved {
   to   = azurerm_lb_rule.wowza["RTMPS"]
 }
 
+moved {
+  from = azurerm_backup_policy_vm.vm_backup
+  to   = azurerm_backup_policy_vm.vm_backup[0]
+}
+
+moved {
+  from = azurerm_backup_policy_vm.vm_backup 
+  to = azurerm_backup_policy_vm.vm_backup[0]
+}

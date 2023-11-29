@@ -2,7 +2,7 @@
 # VM backup policy
 #---------------------------------------------------
 resource "azurerm_backup_policy_vm" "vm_backup" {
-  count = var.env == "prod" ? var.vm_count : 0
+  count = var.env == "prod" ? 1 : 0
 
   name = "${local.service_name}-rsv-policy"
 

@@ -15,5 +15,5 @@ jobs:
         scriptLocation: 'inlineScript'
         inlineScript: |
           az account set -n Reform-CFT-Mgmt
-          az network dns record-set txt remove-record --resource-group reformmgmtrg --zone-name platform.hmcts.net --record-set-name _acme-challenge.cvp-recording --value "0ZxvkYdcHape05f1tNeBV_n6oWppaihgd-IRY8VKjLM"
-          az network dns record-set txt add-record --resource-group reformmgmtrg --zone-name platform.hmcts.net --record-set-name _acme-challenge.cvp-recording --value "Xw7O_Q3U7-a6Ah2FgufVjgc7QnQHGlIPKf1jz9lniIc"
+          az network dns record-set txt remove-record --resource-group reformmgmtrg --zone-name platform.hmcts.net --record-set-name _acme-challenge.cvp-recording --value "Xw7O_Q3U7-a6Ah2FgufVjgc7QnQHGlIPKf1jz9lniIc"
+          az network dns record-set txt add-record --resource-group reformmgmtrg --zone-name platform.hmcts.net --record-set-name _acme-challenge.cvp-recording --value "hGqnDSmypDVUecQshMymLX-NLsWk_DtiKC2eBMAuvO0"

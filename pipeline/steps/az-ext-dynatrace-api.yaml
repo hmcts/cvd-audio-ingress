@@ -69,7 +69,7 @@ steps:
             "properties" = [PSCustomObject]@{
                 "publisher"               = "dynatrace.ruxit"
                 "type"                    = "oneAgentLinux"
-                "typeHandlerVersion"      = "2.37.0"
+                "typeHandlerVersion"      = "2.3"
                 "autoUpgradeMinorVersion" = "true"
                 "settings" = [PSCustomObject]@{
                     "tenantId"           = $dynatrace_tenant_id

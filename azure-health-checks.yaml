@@ -1,0 +1,36 @@
+trigger:
+  - master
+pr:
+  - master
+
+resources:
+  repositories:
+    - repository: azTemplates
+      type: github
+      name: hmcts/azure-devops-templates
+      ref: master
+      endpoint: hmcts
+
+parameters:
+  - name: envs
+    displayName: Environments
+    type: object
+    values: ['sbox','stg','prod']
+    default: ['sbox']
+
+variables:
+  - template: ./pipeline/variables/variables-common.yaml
+
+stages:
+
+  - template: pipeline/stages/build.yaml 
+
+  - ${{each env in parameters.envs}}:
+
+    - template: pipeline/stages/test.yaml
+      parameters:
+        env: ${{env}}
+        ${{ if and(eq(env, 'prod'), contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix))) }}:  # prod + release
+          runStage: 'true' 
+        ${{ if and(ne(env, 'prod'), eq(contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix)), False )) }}: # not prod + not release
+          runStage: 'true'

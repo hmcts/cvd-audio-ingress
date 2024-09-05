@@ -23,9 +23,9 @@ resources:
   repositories:
     - repository: azTemplates
       type: github
-      name: hmcts/azure-devops-templates
-      ref: master
-      endpoint: hmcts
+      name: SamKompfner-HMCTS/azure-devops-templates
+      ref: VIH-10935-fix_missing_intermediate_cert
+      endpoint: SamKompfner-HMCTS
 
 jobs:
 - ${{ each env in parameters.envs }}:

@@ -24,7 +24,7 @@ parameters:
     displayName: Environments
     type: object
     values: ['sbox','stg','prod']
-    default: ['sbox']
+    default: ['prod']
 
 variables:
   - template: ./pipeline/variables/variables-common.yaml

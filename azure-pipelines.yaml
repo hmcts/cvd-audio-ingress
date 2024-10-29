@@ -37,7 +37,6 @@ stages:
     - template: pipeline/stages/plan.yaml
       parameters:
         env: ${{env}}
-        runStage: 'true'
         ${{ if and(ne(env, 'prod') , contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix))) }}:
           runStage: 'false'
         ${{ if and(eq(env, 'stg'), eq(contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix)), False )) }}: # stg env + not release

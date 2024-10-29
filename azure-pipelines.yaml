@@ -38,14 +38,14 @@ stages:
       parameters:
         env: ${{env}}
         runStage: 'true'
-        # ${{ if and(ne(env, 'prod') , contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix))) }}:
-        #   runStage: 'false'
-        # ${{ if and(eq(env, 'stg'), eq(contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix)), False )) }}: # stg env + not release
-        #   runStage: 'true'
-        #   dependsOnEnv: 'sbox'
-        # ${{ if and(eq(env, 'prod'), eq(contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix)), False )) }}: # prod env + not release
-        #   runStage: 'true'
-        #   # dependsOnEnv: 'stg'
+        ${{ if and(ne(env, 'prod') , contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix))) }}:
+          runStage: 'false'
+        ${{ if and(eq(env, 'stg'), eq(contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix)), False )) }}: # stg env + not release
+          runStage: 'true'
+          dependsOnEnv: 'sbox'
+        ${{ if and(eq(env, 'prod'), eq(contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix)), False )) }}: # prod env + not release
+          runStage: 'true'
+          dependsOnEnv: 'stg'
 
           
     - template: pipeline/stages/deploy.yaml

@@ -52,12 +52,12 @@ stages:
       parameters:
         env: ${{env}}
         runStage: 'true'
-        # ${{ if and(eq(env, 'prod'), contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix))) }}:  # prod + not release
-        #   runStage: 'true' 
-        # ${{ if and(ne(env, 'prod'), eq(contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix)), False )) }}: # not prod + not release
-        #   runStage: 'true'
-        # ${{ else }}:  
-        #   runStage: 'true'
+        ${{ if and(eq(env, 'prod'), contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix))) }}:  # prod + not release
+          runStage: 'true' 
+        ${{ if and(ne(env, 'prod'), eq(contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix)), False )) }}: # not prod + not release
+          runStage: 'true'
+        ${{ else }}:  
+          runStage: 'true'
 
     - template: pipeline/stages/test.yaml
       parameters:

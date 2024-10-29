@@ -44,7 +44,7 @@ stages:
           dependsOnEnv: 'sbox'
         ${{ if and(eq(env, 'prod'), eq(contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix)), False )) }}: # prod env + not release
           runStage: 'true'
-          dependsOnEnv: 'stg'
+          # dependsOnEnv: 'stg'
 
           
     - template: pipeline/stages/deploy.yaml

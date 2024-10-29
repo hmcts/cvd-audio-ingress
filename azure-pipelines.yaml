@@ -31,7 +31,7 @@ variables:
 
 stages:
 
-  # - template: pipeline/stages/build.yaml 
+  - template: pipeline/stages/build.yaml 
 
   - ${{each env in parameters.envs}}:
     - template: pipeline/stages/plan.yaml

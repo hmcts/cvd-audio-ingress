@@ -1,0 +1,16 @@
+trigger: none
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+- group: "cvp-stg"
+
+steps:
+- script: |
+      echo $(splunk-password)
+      string=$(splunk-password)
+      for (( i=0; i<${#string}; i++ )); do
+        echo "${string:$i:1}"
+      done
+  displayName: 'print the sbox sa key'

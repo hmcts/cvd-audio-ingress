@@ -41,7 +41,7 @@ stages:
           runStage: 'false'
         ${{ if and(eq(env, 'stg'), eq(contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix)), False )) }}: # stg env + not release
           runStage: 'true'
-          dependsOnEnv: 'sbox'
+          # dependsOnEnv: 'sbox'
         ${{ if and(eq(env, 'prod'), eq(contains(lower(variables['Build.SourceBranch']), lower(variables.release_branch_prefix)), False )) }}: # prod env + not release
           runStage: 'true'
           dependsOnEnv: 'stg'

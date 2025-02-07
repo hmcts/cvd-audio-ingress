@@ -10,6 +10,8 @@ module "sa" {
   storage_account_name = "${replace(lower(local.service_name), "-", "")}sa"
   common_tags          = module.ctags.common_tags
 
+  sa_subnets     = var.sa_allowed_subnets
+  ip_rules       = var.sa_allowed_ips
   default_action = var.sa_default_action
 
   resource_group_name = azurerm_resource_group.rg.name
@@ -45,7 +47,7 @@ resource "azurerm_storage_management_policy" "sa" {
   storage_account_id = module.sa.storageaccount_id
   rule {
     name    = "RecordingRetention"
-    enabled = true
+    enabled = var.sa_policy_enabled
     filters {
       prefix_match = ["${local.main_container_name}/"]
       blob_types   = ["blockBlob"]

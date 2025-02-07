@@ -6,16 +6,6 @@ resource "azurerm_monitor_diagnostic_setting" "cvp-kv-diag-set" {
   target_resource_id         = data.azurerm_key_vault.cvp_kv.id
   log_analytics_workspace_id = local.la_id
 
-  log {
-    category = "AuditEvent"
-    enabled  = false
-
-    retention_policy {
-      days    = 0
-      enabled = false
-    }
-  }
-
   metric {
     category = "AllMetrics"
 
@@ -37,7 +27,6 @@ resource "azurerm_monitor_diagnostic_setting" "cvp-sa-diag-set" {
 
   }
   metric {
-
     category = "Transaction"
     enabled  = true
 
@@ -52,22 +41,12 @@ resource "azurerm_monitor_diagnostic_setting" "cvp-nsg-diag-set" {
   target_resource_id         = module.nsg.network_security_group_id
   log_analytics_workspace_id = local.la_id
 
-  log {
+  enabled_log {
     category = "NetworkSecurityGroupEvent"
-    enabled  = true
-    retention_policy {
-      days    = 0
-      enabled = false
-    }
   }
 
-  log {
+  enabled_log {
     category = "NetworkSecurityGroupRuleCounter"
-    enabled  = true
-    retention_policy {
-      days    = 0
-      enabled = false
-    }
   }
 }
 

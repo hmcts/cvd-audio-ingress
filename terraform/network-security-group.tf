@@ -14,14 +14,14 @@ module "nsg" {
   custom_rules = [
     {
       access                       = "Allow"
-      description                  = "Allow SSH from VPN"
+      description                  = "Allow SSH from F5 VPN"
       destination_address_prefixes = azurerm_network_interface.wowza_nic.*.private_ip_address
       destination_port_range       = "22"
       direction                    = "Inbound"
-      name                         = "Allow_VPN_SSH"
+      name                         = "Allow_F5_VPN_SSH"
       priority                     = 1100
       protocol                     = "Tcp"
-      source_address_prefixes      = var.vpn_source_address_prefixes
+      source_address_prefixes      = var.f5_vpn_source_address_prefixes
       source_port_range            = "*"
     },
     {
@@ -33,7 +33,7 @@ module "nsg" {
       name                         = "Allow_RTMPS"
       priority                     = 1200
       protocol                     = "Tcp"
-      source_address_prefixes      = concat(var.vpn_source_address_prefixes, var.rtmps_source_address_prefixes)
+      source_address_prefixes      = concat(var.f5_vpn_source_address_prefixes, var.globalconnect_vpn_source_address_prefixes, var.anyconnect_vpn_source_address_prefixes, var.rtmps_source_address_prefixes)
       source_port_range            = "*"
     },
     {
@@ -45,7 +45,7 @@ module "nsg" {
       name                         = "Allow_WSEM"
       priority                     = 1300
       protocol                     = "Tcp"
-      source_address_prefixes      = var.vpn_source_address_prefixes
+      source_address_prefixes      = concat(var.f5_vpn_source_address_prefixes, var.globalconnect_vpn_source_address_prefixes, var.anyconnect_vpn_source_address_prefixes)
       source_port_range            = "*"
     },
     {
@@ -57,7 +57,7 @@ module "nsg" {
       name                         = "Allow_WSE_API"
       priority                     = 1400
       protocol                     = "Tcp"
-      source_address_prefixes      = concat(var.vpn_source_address_prefixes, var.rtmps_source_address_prefixes)
+      source_address_prefixes      = concat(var.f5_vpn_source_address_prefixes, var.globalconnect_vpn_source_address_prefixes, var.anyconnect_vpn_source_address_prefixes, var.rtmps_source_address_prefixes)
       source_port_range            = "*"
     },
     {
@@ -71,6 +71,42 @@ module "nsg" {
       protocol                   = "Tcp"
       source_address_prefix      = "AzureLoadBalancer"
       source_port_range          = "*"
+    },
+    {
+      access                       = "Allow"
+      description                  = "Allow SSH from GlobalConnect VPN"
+      destination_address_prefixes = azurerm_network_interface.wowza_nic.*.private_ip_address
+      destination_port_range       = "22"
+      direction                    = "Inbound"
+      name                         = "Allow_GlobalConnect_VPN_SSH"
+      priority                     = 1600
+      protocol                     = "Tcp"
+      source_address_prefixes      = var.globalconnect_vpn_source_address_prefixes
+      source_port_range            = "*"
+    },
+    {
+      access                       = "Allow"
+      description                  = "Allow SSH from AnyConnect VPN"
+      destination_address_prefixes = azurerm_network_interface.wowza_nic.*.private_ip_address
+      destination_port_range       = "22"
+      direction                    = "Inbound"
+      name                         = "Allow_AnyConnect_VPN_SSH"
+      priority                     = 1700
+      protocol                     = "Tcp"
+      source_address_prefixes      = var.anyconnect_vpn_source_address_prefixes
+      source_port_range            = "*"
+    },
+    {
+      access                       = "Allow"
+      description                  = "Allow HTTPS from HRS AKS Subnets"
+      destination_address_prefixes = azurerm_network_interface.wowza_nic.*.private_ip_address
+      destination_port_range       = "443"
+      direction                    = "Inbound"
+      name                         = "Allow_HRS_AKS_HTTPS"
+      priority                     = 1800
+      protocol                     = "Tcp"
+      source_address_prefixes      = var.hrs_aks_source_address_prefixes
+      source_port_range            = "*"
     }
   ]
 }
